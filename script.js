@@ -1,53 +1,37 @@
-// Native details keep the panels usable without JavaScript.
-// Hover reveals; click/Enter/Space pins open; Escape closes.
+// Hover previews the panel overview; clicking anywhere on a panel navigates to its subpage.
 const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 const cards = [...document.querySelectorAll('.project')];
-const states = new Map(cards.map(card => [card, { pinned: false, hovered: false, dismissed: false }]));
+const states = new Map(cards.map(card => [card, { hovered: false }]));
 function render(card) {
   const state = states.get(card);
-  card.open = state.pinned || (state.hovered && !state.dismissed);
-  card.querySelector('.reveal-label').firstChild.textContent = state.pinned ? 'Close ' : card.open ? 'Keep open ' : 'Discover ';
+  card.open = state.hovered;
 }
 cards.forEach(card => {
   const state = states.get(card);
   card.addEventListener('pointerenter', event => {
     if (!hoverQuery.matches || event.pointerType === 'touch') return;
     state.hovered = true;
-    state.dismissed = false;
     render(card);
   });
   card.addEventListener('pointerleave', () => {
     state.hovered = false;
-    state.dismissed = false;
     render(card);
   });
   card.querySelector('summary').addEventListener('click', event => {
     event.preventDefault();
-    state.pinned = !state.pinned;
-    state.dismissed = !state.pinned;
-    render(card);
+    const link = card.querySelector('.section-link')?.getAttribute('href');
+    if (link) window.location.href = link;
   });
-  // Keep a revealed link available while keyboard focus is inside the panel.
   card.addEventListener('focusin', event => {
     if (event.target.closest('.project-description')) {
-      state.pinned = true;
+      state.hovered = true;
       render(card);
     }
   });
 });
-document.addEventListener('keydown', event => {
-  if (event.key !== 'Escape') return;
-  cards.forEach(card => {
-    if (card.querySelector('.project-description').contains(document.activeElement)) card.querySelector('summary').focus();
-    const state = states.get(card);
-    state.pinned = false;
-    state.dismissed = true;
-    render(card);
-  });
-});
 function updateHint() {
   const hint = document.querySelector('.interaction-hint');
-  if (hint) hint.textContent = hoverQuery.matches ? 'Hover to discover · Click to keep open' : 'Tap a panel to discover';
+  if (hint) hint.textContent = hoverQuery.matches ? 'Hover to preview · Click any panel to explore' : 'Tap any panel to explore';
   cards.forEach(card => { states.get(card).hovered = false; render(card); });
 }
 hoverQuery.addEventListener('change', updateHint);

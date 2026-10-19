@@ -56,7 +56,6 @@ nav{display:flex;gap:30px}nav a[aria-current="page"]{color:var(--accent);text-de
 .project[open] .project-art{opacity:.06;transform:scale(1.03)}
 .project[open] .project-number{opacity:0;transform:translateY(20px)}
 .project[open] .art-note{visibility:hidden}
-.project[open] .toggle-symbol{transform:rotate(45deg)}
 .gallery-caption{padding:16px var(--gutter);border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;color:var(--muted);font-size:9px;text-transform:none;letter-spacing:.015em}
 .gallery-caption a{color:var(--ink)}
 .work-section{display:grid;grid-template-columns:1fr 1.45fr;gap:100px;padding:85px var(--gutter);border-bottom:1px solid var(--line);align-items:start}
