@@ -79,7 +79,7 @@ nav{display:flex;gap:30px}nav a[aria-current="page"]{color:var(--accent);text-de
 .contact-top{display:flex;flex-direction:column;align-items:flex-start;padding:65px var(--gutter);gap:24px}
 .contact-link{font-family:var(--serif);font-size:clamp(46px,7vw,110px);line-height:1.1;letter-spacing:-.05em}
 .contact-link span{font-family:var(--sans);font-size:.6em;margin-left:30px}
-.contact-top>a:last-child{font-size:13px}
+.contact-meta{display:flex;flex-wrap:wrap;gap:12px 28px;font-size:13px}
 .footer-bottom{padding:24px var(--gutter);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;font-size:9px}
 .cv-main{max-width:1150px;margin:auto;padding:45px var(--gutter) 70px}
 .back-link{display:inline-block;margin-bottom:60px}
