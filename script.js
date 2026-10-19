@@ -75,6 +75,12 @@ if (navLinks.length) {
   }
 }
 
+function getYouTubeEmbedUrl(url) {
+  if (!url) return '';
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : '';
+}
+
 // Auto-loader for project media & links from assets/projects/<folder>/links.md
 document.querySelectorAll('.portfolio-entry[data-project-folder]').forEach(async entry => {
   const folder = entry.getAttribute('data-project-folder');
@@ -87,6 +93,7 @@ document.querySelectorAll('.portfolio-entry[data-project-folder]').forEach(async
       return match ? match[1].trim() : '';
     };
     const linksBox = entry.querySelector('.project-links');
+    const mediaBox = entry.querySelector('.project-media');
     const addLink = (url, label) => {
       if (!url || !/^(https?:\/\/|assets\/)/i.test(url) || !linksBox) return;
       if ([...linksBox.querySelectorAll('a')].some(a => a.href === url || a.getAttribute('href') === url)) return;
@@ -97,15 +104,31 @@ document.querySelectorAll('.portfolio-entry[data-project-folder]').forEach(async
       a.textContent = `${label} ↗`;
       linksBox.appendChild(a);
     };
-    addLink(getField('Website URL'), 'Project website');
-    addLink(getField('Video URL'), 'Watch video');
-    addLink(getField('Paper URL'), 'Read paper');
+    const websiteUrl = getField('Website URL');
+    const videoUrl = getField('Video URL');
+    const paperUrl = getField('Paper URL');
+    addLink(websiteUrl, 'Project website');
+    addLink(videoUrl, 'Watch video');
+    addLink(paperUrl, 'Read paper');
+
+    const ytEmbed = getYouTubeEmbedUrl(videoUrl);
+    if (ytEmbed && mediaBox && !mediaBox.querySelector(`iframe[src="${ytEmbed}"]`)) {
+      const wrap = document.createElement('div');
+      wrap.className = 'video-embed';
+      const iframe = document.createElement('iframe');
+      iframe.src = ytEmbed;
+      iframe.title = `${entry.querySelector('h2')?.textContent || 'Project'} video`;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.loading = 'lazy';
+      wrap.appendChild(iframe);
+      mediaBox.appendChild(wrap);
+    }
 
     const mediaList = getField('Media files \\(comma-separated filenames in this folder\\)')
       .split(',')
       .map(s => s.trim())
       .filter(s => s && !/^[-*]/.test(s));
-    const mediaBox = entry.querySelector('.project-media');
     if (mediaList.length && mediaBox) {
       mediaBox.innerHTML = '';
       mediaList.forEach(file => {
@@ -116,6 +139,13 @@ document.querySelectorAll('.portfolio-entry[data-project-folder]').forEach(async
           video.controls = true;
           video.playsInline = true;
           mediaBox.appendChild(video);
+        } else if (/\.pdf$/i.test(file)) {
+          const iframe = document.createElement('iframe');
+          iframe.className = 'pdf-viewer';
+          iframe.src = `${src}#view=FitH`;
+          iframe.title = `${entry.querySelector('h2')?.textContent || 'Project'} PDF`;
+          iframe.loading = 'lazy';
+          mediaBox.appendChild(iframe);
         } else {
           const img = document.createElement('img');
           img.src = src;
