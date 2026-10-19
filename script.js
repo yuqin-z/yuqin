@@ -75,7 +75,7 @@ if (navLinks.length) {
   }
 }
 
-// Optional auto-loader for project media & links from assets/projects/<folder>/links.md
+// Auto-loader for project media & links from assets/projects/<folder>/links.md
 document.querySelectorAll('.portfolio-entry[data-project-folder]').forEach(async entry => {
   const folder = entry.getAttribute('data-project-folder');
   try {
@@ -83,12 +83,13 @@ document.querySelectorAll('.portfolio-entry[data-project-folder]').forEach(async
     if (!res.ok) return;
     const text = await res.text();
     const getField = label => {
-      const match = text.match(new RegExp(`^-\\s*${label}:\\s*(.+)$`, 'mi'));
+      const match = text.match(new RegExp(`^[ \\t]*[-*][ \\t]*${label}:[ \\t]*([^\\r\\n]+)$`, 'mi'));
       return match ? match[1].trim() : '';
     };
     const linksBox = entry.querySelector('.project-links');
     const addLink = (url, label) => {
-      if (!url || !linksBox || [...linksBox.querySelectorAll('a')].some(a => a.href === url || a.getAttribute('href') === url)) return;
+      if (!url || !/^(https?:\/\/|assets\/)/i.test(url) || !linksBox) return;
+      if ([...linksBox.querySelectorAll('a')].some(a => a.href === url || a.getAttribute('href') === url)) return;
       const a = document.createElement('a');
       a.href = url;
       a.target = '_blank';
@@ -103,7 +104,7 @@ document.querySelectorAll('.portfolio-entry[data-project-folder]').forEach(async
     const mediaList = getField('Media files \\(comma-separated filenames in this folder\\)')
       .split(',')
       .map(s => s.trim())
-      .filter(Boolean);
+      .filter(s => s && !/^[-*]/.test(s));
     const mediaBox = entry.querySelector('.project-media');
     if (mediaList.length && mediaBox) {
       mediaBox.innerHTML = '';

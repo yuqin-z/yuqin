@@ -116,6 +116,7 @@ nav{display:flex;gap:30px}nav a[aria-current="page"]{color:var(--accent);text-de
 .project-links:empty{display:none}
 .project-links a,.paper-link a{border-bottom:1px solid var(--line);padding-bottom:3px}
 .project-media{margin-top:24px;display:flex;flex-direction:column;gap:16px}
+.project-media:empty{display:none}
 .project-media .image-placeholder{margin-top:0}
 .project-media img,.project-media video{width:100%;height:auto;border:1px solid #d9d3c8;background:#ece8e0}
 .cv-index{display:flex;flex-wrap:wrap;gap:12px 24px;padding:20px 0;border-top:1px solid var(--line);font-size:9px;line-height:1.8}
